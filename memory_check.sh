@@ -1,29 +1,40 @@
 #!bin/bash
 #SE exercise 1/2 
 #Written by: Maynard Louis E. Prepotente
+#Voyager IT Cadetship Training Program
+#Script Name: memory_check.sh 
 
-free
-TOTAL_MEMORY=$( free | grep Mem: | awk '{ print ( $3 / $2 ) * 100 ')
-echo "Memory Usage: " $TOTAL_MEMORY"%"
-
-if [ $# -eq 0]
-  then 
-    echo "Please Supply Required Parameters:"
-    echo "-c : critical threshold"
-    echo "-w : warning threshold"
-    echo "-e : email to send the report"
-fi
+MU=$( free | grep Mem: | awk '{ print ( $3 / $2 ) * 100 }')
 
 while getopts "c:w:e:" opt; do
 
   case $opt in
   
-  c ) echo "Critical Threshold: " $OPTARG;;
-  w ) echo "Warning Threshold: " $OPTARG;;
-  e ) echo "Email: " $OPTARG;;
-  \?) echo "Invalid Argument"ll
+  c ) CT=$OPTARG;;
+  w ) WT=$OPTARG;;
+  e ) EM=$OPTARG;;
+  \?) echo "Invalid Argument";;
   
   esac
 done
 
-shift $(($OPTIND -1))
+shift "$(($OPTIND -1))"
+
+if [ ! -z "$CT" ] && [ ! -z "$WT" ] && [ ! -z "$EM" ]
+  then
+    if [[ $CT < $WT ]]
+      then
+        echo "Critical Threshold should be greater than the Warning Threshold"
+      else
+        printf " Total Memory Usage: %0.2f \n" $MU
+        echo " Critical Threshold: $CT"
+        echo " Warning Threshold:  $WT"
+        echo " Email:              $EM"
+    fi
+else
+    echo "Please Supply these Parameters:"
+    echo "-c: critical threshold, "
+    echo "-w: Warning Threshold, "
+    echo "-e: Email to send the report"
+fi    
+  
