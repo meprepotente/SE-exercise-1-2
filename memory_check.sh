@@ -4,7 +4,7 @@
 #Voyager IT Cadetship Training Program
 #Script Name: memory_check.sh 
 
-MU=$( free | grep Mem: | awk '{ print ( $3 / $2 ) * 100 }')
+MU=$( free | grep Mem: | awk '{ printf "%3.0f", ( $3 / $2 ) * 100 }')
 
 while getopts "c:w:e:" opt; do
 
@@ -22,14 +22,24 @@ shift "$(($OPTIND -1))"
 
 if [ ! -z "$CT" ] && [ ! -z "$WT" ] && [ ! -z "$EM" ]
   then
-    if [[ $CT < $WT ]]
+    if [[ "$CT" -gt "$WT" ]]
       then
-        echo "Critical Threshold should be greater than the Warning Threshold"
+        echo " Total Memory Usage: $MU"
+        echo " Critical Threshold:  $CT"
+        echo " Warning Threshold:   $WT"
+        echo " Email:               $EM"
+        
+        if [ "$MU" -ge "$CT"]
+          then
+          exit 2
+        elif [ "$MU" -ge "$WT" ] && [ "$MU" -lt "$CT"]
+          then
+          exit 1
+        else
+          exit 0
+        fi
       else
-        printf " Total Memory Usage: %0.2f \n" $MU
-        echo " Critical Threshold: $CT"
-        echo " Warning Threshold:  $WT"
-        echo " Email:              $EM"
+        echo "Critical Threshold should be greater than the Warning Threshold"
     fi
 else
     echo "Please Supply these Parameters:"
