@@ -1,3 +1,8 @@
+#!bin/bash
+#SE exercise 1/2 
+#Written by: Maynard Louis E. Prepotente
+#Voyager IT Cadetship Training Program
+#Script Name: memory_check.sh 
 
 function sendReport() {
   ps axo ruser,pid,%mem | sort -nr | head -n 11
