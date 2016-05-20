@@ -1,9 +1,7 @@
-#!bin/bash
-#SE exercise 1/2 
-#Written by: Maynard Louis E. Prepotente
-#Voyager IT Cadetship Training Program
-#Script Name: memory_check.sh 
 
+function sendReport() {
+  ps axo ruser,pid,%mem | sort -nr | head -n 11
+}
 MU=$( free | grep Mem: | awk '{ printf "%3.0f", ( $3 / $2 ) * 100 }')
 
 while getopts "c:w:e:" opt; do
@@ -31,6 +29,7 @@ if [ ! -z "$CT" ] && [ ! -z "$WT" ] && [ ! -z "$EM" ]
         
         if [ "$MU" -ge "$CT"]
           then
+          sendReport
           exit 2
         elif [ "$MU" -ge "$WT" ] && [ "$MU" -lt "$CT"]
           then
