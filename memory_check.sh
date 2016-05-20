@@ -4,6 +4,13 @@
 #Voyager IT Cadetship Training Program
 #Script Name: memory_check.sh 
 
+function sendReport() {
+report=$( ps axo ruser,pid,%mem | sort -nr | head -n 11 )
+reportDT=$(date +%Y%m%d" "%H:%M)
+
+echo $report | mail -s "$reportDT memory check - critical" $1
+}
+
 MU=$( free | grep Mem: | awk '{ printf "%3.0f", ( $3 / $2 ) * 100 }')
 
 while getopts "c:w:e:" opt; do
@@ -31,6 +38,7 @@ if [ ! -z "$CT" ] && [ ! -z "$WT" ] && [ ! -z "$EM" ]
         
         if [ "$MU" -ge "$CT"]
           then
+          sendReport $EM
           exit 2
         elif [ "$MU" -ge "$WT" ] && [ "$MU" -lt "$CT"]
           then
